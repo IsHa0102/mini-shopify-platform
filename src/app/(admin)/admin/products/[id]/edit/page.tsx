@@ -10,7 +10,7 @@ async function updateProduct(id: string, formData: FormData) {
 
   await prisma.product.update({
     where: { id },
-    data: { name, description, price }
+    data: { title, description, price }
   });
 
   redirect("/admin/products");
