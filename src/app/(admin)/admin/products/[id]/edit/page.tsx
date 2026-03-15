@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 async function updateProduct(id: string, formData: FormData) {
   "use server";
 
-  const name = formData.get("name") as string;
+  const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const price = parseFloat(formData.get("price") as string);
 
@@ -32,21 +32,21 @@ export default async function EditProductPage({
       <h1 className="text-2xl font-bold">Edit Product</h1>
 
       <input
-        name="name"
-        defaultValue={product?.name}
+        name="title"
+        defaultValue={product?.title ?? ""}
         className="w-full p-2 bg-slate-900 rounded"
       />
 
       <textarea
         name="description"
-        defaultValue={product?.description}
+        defaultValue={product?.description ?? ""}
         className="w-full p-2 bg-slate-900 rounded"
       />
 
       <input
         name="price"
         type="number"
-        defaultValue={product?.price}
+        defaultValue={product?.price ?? ""}
         className="w-full p-2 bg-slate-900 rounded"
       />
 
