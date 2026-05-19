@@ -2,57 +2,72 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 
 export default async function StoresPage() {
+  const shops = await prisma.shop.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 
-const shops = await prisma.shop.findMany({
-orderBy: { createdAt: "desc" }
-});
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Top nav */}
+      <nav className="bg-white border-b border-slate-200 px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <Link href="/" className="font-bold text-slate-900 text-lg tracking-tight">
+            ShopBuilder
+          </Link>
+          <Link href="/admin" className="text-sm text-slate-500 hover:text-slate-900 transition">
+            Admin →
+          </Link>
+        </div>
+      </nav>
 
-return ( <div className="max-w-6xl mx-auto px-6 py-12">
-
-
-  {/* Header */}
-
-  <div className="mb-10">
-    <h1 className="text-4xl font-bold tracking-tight">
-      Stores
-    </h1>
-
-    <p className="text-gray-400 mt-2">
-      Browse all available storefronts
-    </p>
-  </div>
-
-  {/* Stores Grid */}
-
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-    {shops.map((shop) => (
-      <Link
-        key={shop.id}
-        href={`/store/${shop.slug}`}
-        className="group bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-emerald-500 hover:shadow-lg transition flex items-center justify-between"
-      >
-
-        <div>
-          <h2 className="text-xl font-semibold group-hover:text-emerald-400 transition">
-            {shop.name}
-          </h2>
-
-          <p className="text-sm text-gray-400 mt-1">
-            Enter storefront
-          </p>
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="page-title">Stores</h1>
+          <p className="page-subtitle">Browse all available storefronts</p>
         </div>
 
-        <span className="text-emerald-400 font-semibold group-hover:translate-x-1 transition">
-          →
-        </span>
+        {/* Empty state */}
+        {shops.length === 0 && (
+          <div className="text-center py-20 text-slate-400">
+            <div className="text-5xl mb-4">🏪</div>
+            <p className="font-medium">No stores yet</p>
+            <p className="text-sm mt-1">Ask an admin to create one.</p>
+          </div>
+        )}
 
-      </Link>
-    ))}
+        {/* Store grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {shops.map((shop) => {
+            const initial = shop.name.charAt(0).toUpperCase();
+            return (
+              <Link
+                key={shop.id}
+                href={`/store/${shop.slug}`}
+                className="group card p-6 hover:border-emerald-300 hover:shadow-md transition-all duration-200 flex items-center gap-5"
+              >
+                {/* Avatar */}
+                <div className="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                  {initial}
+                </div>
 
-  </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-base font-semibold text-slate-900 group-hover:text-emerald-700 transition">
+                    {shop.name}
+                  </h2>
+                  <p className="text-sm text-slate-400 mt-0.5">
+                    {shop.slug}
+                  </p>
+                </div>
 
-</div>
-
-);
+                <span className="text-slate-300 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all">
+                  →
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
 }

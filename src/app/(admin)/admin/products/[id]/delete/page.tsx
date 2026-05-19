@@ -4,59 +4,49 @@ import Link from "next/link";
 
 async function deleteProduct(id: string) {
   "use server";
-
-  await prisma.product.delete({
-    where: { id }
-  });
-
+  await prisma.product.delete({ where: { id } });
   redirect("/admin/products");
 }
 
-export default async function DeleteProduct({
-  params
+export default async function DeleteProductPage({
+  params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-
   const { id } = await params;
 
-  const product = await prisma.product.findUnique({
-    where: { id }
-  });
+  const product = await prisma.product.findUnique({ where: { id } });
 
-  if (!product) {
-    redirect("/admin/products");
-  }
+  if (!product) redirect("/admin/products");
 
   return (
-    <div className="p-10 max-w-xl mx-auto">
+    <div className="max-w-md mx-auto px-6 py-16">
+      <div className="card p-8 text-center">
+        <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center text-2xl mx-auto mb-5">
+          🗑️
+        </div>
 
-      <h1 className="text-3xl font-bold mb-6">
-        Delete Product
-      </h1>
+        <h1 className="text-xl font-bold text-slate-900 mb-2">
+          Delete product?
+        </h1>
 
-      <p className="mb-6">
-        Are you sure you want to delete <b>{product.title}</b>?
-      </p>
+        <p className="text-slate-500 text-sm mb-8">
+          <span className="font-semibold text-slate-700">{product!.title}</span>{" "}
+          will be permanently removed. This cannot be undone.
+        </p>
 
-      <div className="flex gap-4">
+        <div className="flex gap-3">
+          <Link href="/admin/products" className="btn-secondary flex-1">
+            Cancel
+          </Link>
 
-        <Link
-          href="/admin/products"
-          className="px-4 py-2 border border-gray-500 rounded"
-        >
-          Cancel
-        </Link>
-
-        <form action={deleteProduct.bind(null, id)}>
-          <button className="px-4 py-2 bg-red-600 rounded">
-            Delete Product
-          </button>
-        </form>
-
+          <form action={deleteProduct.bind(null, id)} className="flex-1">
+            <button type="submit" className="btn-danger w-full">
+              Delete
+            </button>
+          </form>
+        </div>
       </div>
-
     </div>
   );
 }
-
